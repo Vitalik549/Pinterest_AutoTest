@@ -1,0 +1,57 @@
+2015-05-26 15:50:45 INFO  AbstractPropertiesHandler:23 - Loaded properties from location: properties/environment.properties
+2015-05-26 15:50:45 INFO  BaseTest:122 - Environment is set to: default
+2015-05-26 15:50:45 INFO  BaseTest:185 - Initializing webdriver with chrome, , ANY
+2015-05-26 15:52:06 INFO  AbstractPropertiesHandler:23 - Loaded properties from location: properties/environment.properties
+2015-05-26 15:52:06 INFO  BaseTest:122 - Environment is set to: default
+2015-05-26 15:52:07 INFO  BaseTest:185 - Initializing webdriver with chrome, , ANY
+2015-05-26 15:59:14 INFO  AbstractPropertiesHandler:23 - Loaded properties from location: properties/environment.properties
+2015-05-26 15:59:14 INFO  BaseTest:122 - Environment is set to: default
+2015-05-26 15:59:14 INFO  BaseTest:185 - Initializing webdriver with chrome, , ANY
+2015-05-26 16:01:16 INFO  AbstractPropertiesHandler:23 - Loaded properties from location: properties/environment.properties
+2015-05-26 16:01:16 INFO  BaseTest:122 - Environment is set to: default
+2015-05-26 16:01:16 INFO  BaseTest:185 - Initializing webdriver with chrome, , ANY
+2015-05-26 16:02:15 INFO  AbstractPropertiesHandler:23 - Loaded properties from location: properties/environment.properties
+2015-05-26 16:02:15 INFO  BaseTest:122 - Environment is set to: default
+2015-05-26 16:02:15 INFO  BaseTest:185 - Initializing webdriver with chrome, , ANY
+2015-05-26 16:03:39 INFO  AbstractPropertiesHandler:23 - Loaded properties from location: properties/environment.properties
+2015-05-26 16:03:39 INFO  BaseTest:122 - Environment is set to: default
+2015-05-26 16:03:39 INFO  BaseTest:185 - Initializing webdriver with chrome, , ANY
+2015-05-26 16:06:55 INFO  AbstractPropertiesHandler:23 - Loaded properties from location: properties/environment.properties
+2015-05-26 16:06:55 INFO  BaseTest:122 - Environment is set to: default
+2015-05-26 16:06:55 INFO  BaseTest:185 - Initializing webdriver with chrome, , ANY
+2015-05-26 16:07:19 INFO  AbstractPropertiesHandler:23 - Loaded properties from location: properties/environment.properties
+2015-05-26 16:07:19 INFO  BaseTest:122 - Environment is set to: default
+2015-05-26 16:07:19 INFO  BaseTest:185 - Initializing webdriver with chrome, , ANY
+2015-05-26 16:08:39 INFO  AbstractPropertiesHandler:23 - Loaded properties from location: properties/environment.properties
+2015-05-26 16:08:39 INFO  BaseTest:122 - Environment is set to: default
+2015-05-26 16:08:39 INFO  BaseTest:185 - Initializing webdriver with chrome, , ANY
+2015-05-26 16:11:01 INFO  AbstractPropertiesHandler:23 - Loaded properties from location: properties/environment.properties
+2015-05-26 16:11:01 INFO  BaseTest:122 - Environment is set to: default
+2015-05-26 16:11:01 INFO  BaseTest:185 - Initializing webdriver with chrome, , ANY
+2015-05-26 16:18:10 INFO  AbstractPropertiesHandler:23 - Loaded properties from location: properties/environment.properties
+2015-05-26 16:18:10 INFO  BaseTest:122 - Environment is set to: default
+2015-05-26 16:18:10 INFO  BaseTest:185 - Initializing webdriver with chrome, , ANY
+2015-05-26 16:18:44 INFO  AbstractPropertiesHandler:23 - Loaded properties from location: properties/environment.properties
+2015-05-26 16:18:44 INFO  BaseTest:122 - Environment is set to: default
+2015-05-26 16:18:44 INFO  BaseTest:185 - Initializing webdriver with chrome, , ANY
+2015-05-26 16:21:40 INFO  AbstractPropertiesHandler:23 - Loaded properties from location: properties/environment.properties
+2015-05-26 16:21:40 INFO  BaseTest:122 - Environment is set to: default
+2015-05-26 16:21:40 INFO  BaseTest:185 - Initializing webdriver with chrome, , ANY
+2015-05-26 16:21:55 INFO  AbstractPropertiesHandler:23 - Loaded properties from location: properties/environment.properties
+2015-05-26 16:21:56 INFO  BaseTest:122 - Environment is set to: default
+2015-05-26 16:21:56 INFO  BaseTest:185 - Initializing webdriver with chrome, , ANY
+2015-05-26 16:23:10 INFO  AbstractPropertiesHandler:23 - Loaded properties from location: properties/environment.properties
+2015-05-26 16:23:10 INFO  BaseTest:122 - Environment is set to: default
+2015-05-26 16:23:10 INFO  BaseTest:185 - Initializing webdriver with chrome, , ANY
+2015-05-26 16:25:37 INFO  AbstractPropertiesHandler:23 - Loaded properties from location: properties/environment.properties
+2015-05-26 16:25:38 INFO  BaseTest:122 - Environment is set to: default
+2015-05-26 16:25:38 INFO  BaseTest:185 - Initializing webdriver with chrome, , ANY
+2015-05-26 16:26:12 INFO  AbstractPropertiesHandler:23 - Loaded properties from location: properties/environment.properties
+2015-05-26 16:26:12 INFO  BaseTest:122 - Environment is set to: default
+2015-05-26 16:26:12 INFO  BaseTest:185 - Initializing webdriver with chrome, , ANY
+2015-05-26 16:27:17 INFO  AbstractPropertiesHandler:23 - Loaded properties from location: properties/environment.properties
+2015-05-26 16:27:17 INFO  BaseTest:122 - Environment is set to: default
+2015-05-26 16:27:17 INFO  BaseTest:185 - Initializing webdriver with chrome, , ANY
+2015-05-26 16:27:56 INFO  AbstractPropertiesHandler:23 - Loaded properties from location: properties/environment.properties
+2015-05-26 16:27:56 INFO  BaseTest:122 - Environment is set to: default
+2015-05-26 16:27:56 INFO  BaseTest:185 - Initializing webdriver with chrome, , ANY
