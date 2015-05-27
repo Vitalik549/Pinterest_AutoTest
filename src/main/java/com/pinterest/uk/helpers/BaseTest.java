@@ -1,5 +1,7 @@
 package com.pinterest.uk.helpers;
 
+import com.codeborne.selenide.Configuration;
+import com.codeborne.selenide.WebDriverRunner;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -40,10 +42,12 @@ public class BaseTest {
     public void setUp() {
         final Os os = getOs();
         initializeStaticFields();
-        if (!useRemoteWebDriver) {
+        if (!useRemoteWebDriver && os != Os.MACOS32) {
             initializeDriver("webdriver.chrome.driver", os, os.chromePath);
         }
         initialiseWebDriver();
+        WebDriverRunner.setWebDriver(driver); //for selenide purposes
+        Configuration.reportsFolder = "./target/screens";
     }
 
     public String getEnvironment() {
@@ -87,8 +91,7 @@ public class BaseTest {
                     os.prefix + browserPath + os.suffix);
             if (inputStream == null) {
                 throw new IllegalStateException("Cannot locate driver on classpath (missing dependency): "
-                        + os.prefix
-                        + browserPath + os.suffix);
+                        + os.prefix + browserPath + os.suffix);
             }
             try {
                 File temp = File.createTempFile(browserPath, os.suffix);
@@ -119,7 +122,7 @@ public class BaseTest {
         if (environment == null) {
             environment = "default";
         }
-        LOGGER.info("Environment is set to: " + environment.toString());
+        LOGGER.info("Environment is set to: " + environment);
         browser = properties.getProperty(environment + "."
                 + EnvironmentPropertiesHandler.BROWSER);
         if (properties.getProperty(environment + "."
@@ -134,11 +137,10 @@ public class BaseTest {
     protected void initialiseWebDriver() {
         DesiredCapabilities capability = null;
         if (useRemoteWebDriver) {
-            LOGGER.info("Using remote webdriver");
-            if (properties.getProperty(environment + "."
-                    + EnvironmentPropertiesHandler.REMOTE_WEBDRIVER_URL) != null) {
-                remoteWebDriverUrl = properties.getProperty(environment + "."
-                        + EnvironmentPropertiesHandler.REMOTE_WEBDRIVER_URL);
+            String remoteWebDriverUrl = properties.getProperty(environment + "."
+                    + EnvironmentPropertiesHandler.REMOTE_WEBDRIVER_URL);
+            if (remoteWebDriverUrl != null) {
+                this.remoteWebDriverUrl = remoteWebDriverUrl;
             }
 
             if (browser.equalsIgnoreCase("firefox")) {
@@ -163,11 +165,11 @@ public class BaseTest {
                         + capability.getBrowserName() + ", "
                         + capability.getVersion() + ", "
                         + capability.getPlatform());
-                driver = new RemoteWebDriver(new URL(remoteWebDriverUrl), setCapabilities(capability));
+                driver = new RemoteWebDriver(new URL(this.remoteWebDriverUrl), setCapabilities(capability));
                 ((RemoteWebDriver) driver).setFileDetector(new LocalFileDetector());
             } catch (MalformedURLException e) {
                 final String msg = "Error while initializing remote webdriver with url: "
-                        + remoteWebDriverUrl;
+                        + this.remoteWebDriverUrl;
                 LOGGER.error(msg, e);
                 throw new RuntimeException(msg, e);
             }
@@ -194,6 +196,10 @@ public class BaseTest {
                 throw new RuntimeException(msg);
             }
         }
+    }
+
+    private void logBrowserSetting(DesiredCapabilities capability) {
+        LOGGER.info("Initializing webdriver with " + capability.getBrowserName() + ", " + capability.getVersion() + ", " + capability.getPlatform());
     }
 
     private DesiredCapabilities setCapabilities(DesiredCapabilities desiredCapability) {
@@ -332,7 +338,7 @@ public class BaseTest {
         if (properties.getProperty(environment + "."
                 + EnvironmentPropertiesHandler.PROXY_TYPE) != null
                 && properties.getProperty(environment + "."
-                        + EnvironmentPropertiesHandler.PROXY_ADDRESS) != null) {
+                + EnvironmentPropertiesHandler.PROXY_ADDRESS) != null) {
             Proxy proxy = new Proxy();
             proxy.setProxyType(ProxyType.valueOf(properties.getProperty(environment + "."
                     + EnvironmentPropertiesHandler.PROXY_TYPE)));
@@ -342,7 +348,6 @@ public class BaseTest {
             proxy.setHttpProxy(proxyAddress);
             desiredCapability.setCapability(CapabilityType.PROXY, proxy);
         }
-
         return desiredCapability;
 
     }
@@ -373,7 +378,6 @@ public class BaseTest {
         if (allowAuth || automaticallySave) {
             LOGGER.info("Adding profile to " + desiredCapabilities.getBrowserName());
             desiredCapabilities.setCapability(FirefoxDriver.PROFILE, profile);
-
         }
     }
 }

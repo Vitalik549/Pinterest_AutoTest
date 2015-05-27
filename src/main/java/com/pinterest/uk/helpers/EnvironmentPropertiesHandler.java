@@ -34,6 +34,8 @@ public class EnvironmentPropertiesHandler extends AbstractPropertiesHandler {
             "list_of_trusted_domains_for_browser_authentication";
     public static final String AUTOMATICALLY_SAVE_TO_DISK = "automatically_save_file_to_disk";
     public static final String DOWNLOAD_FILE_TO = "download_file_to";
+    public static final String STORE_SCREEN_TO = "store_screen_to";
+    public static final String IMPLICITLY_WAIT_TIMEOUT_IN_SECONDS = "implicitly_wait_timeout_in_seconds";
 
     private EnvironmentPropertiesHandler(String location) {
         super(location);

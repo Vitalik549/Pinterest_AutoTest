@@ -1,39 +1,57 @@
 package com.pinterest.uk.pages;
 
+import com.pinterest.uk.helpers.StatusWebElem;
+import com.pinterest.uk.helpers.User;
+import com.pinterest.uk.pages.basePages.PinBasePage;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+
+import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Selenide.$;
 
 
 public class WelcomePage extends PinBasePage {
 
     @FindBy(id = "userEmail")
-    private WebElement userEmail2;
-
-    @FindBy(id = "userPassword")
-    private WebElement userPassword2;
-
-    @FindBy(name = "username_or_email")
     private WebElement userEmail;
 
-    @FindBy(name = "password")
+    @FindBy(id = "userPassword")
     private WebElement userPassword;
 
-    @FindBy(xpath = "//*[@class = 'buttonText'][text() = 'Log in']")
+    @FindBy(name = "id")
+    private WebElement userEmailInPopup;
+
+    @FindBy(name = "password")
+    private WebElement userPasswordInPopup;
+
+    @FindBy(xpath = "//button[contains(@class, 'SignupButton')]")
+    private WebElement logInButtonPopup;
+
+    @FindBy(xpath = "//button[contains(., 'Log in')]")
     private WebElement logInButton;
 
-    private String login = "Vitalik549@gmail.com";
-    private String password = "1111222334";
+
+
+
 
     public WelcomePage(WebDriver driver) {
         super(driver);
     }
 
-    public HomePage loginUser(){
-        userEmail.sendKeys(login);
-        userPassword.sendKeys(password);
-        logInButton.click();
+    public HomePage loginUser(User user){
+        $(userEmailInPopup).shouldBe(visible).setValue(user.login);
+        $(userPasswordInPopup).setValue(user.password);
+        $(logInButtonPopup).click();
         return new HomePage(driver);
     }
 
+    public boolean isLoginButtonDisplayed() {
+        return isElementDisplayed(logInButton);
+    }
+
+    public WelcomePage checkLoginButtonDisplayed(StatusWebElem statusWebElem) {
+        checkElementStatus($(logInButton), statusWebElem);
+        return this;
+    }
 }
