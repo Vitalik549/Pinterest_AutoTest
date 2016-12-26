@@ -1,6 +1,5 @@
 package com.pinterest.uk.pages.basePages;
 
-import com.codeborne.selenide.SelenideElement;
 import com.pinterest.uk.helpers.BaseTest;
 import com.pinterest.uk.helpers.EnvironmentPropertiesHandler;
 import com.pinterest.uk.helpers.User;
@@ -9,8 +8,7 @@ import com.pinterest.uk.pages.HomePage;
 import com.pinterest.uk.pages.MenuPage;
 import com.pinterest.uk.pages.WelcomePage;
 import org.apache.log4j.Logger;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Point;
+import org.apache.log4j.PropertyConfigurator;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.io.TemporaryFilesystem;
 import org.testng.Assert;
@@ -28,12 +26,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import static com.codeborne.selenide.Condition.visible;
-import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.screenshot;
 
 public class PinBaseTest extends BaseTest {
 
+    static {
+        PropertyConfigurator.configure("./src/test/resources/log4j.properties");
+    }
     private static final Logger LOGGER = Logger.getLogger(PinBaseTest.class);
 
     protected WelcomePage welcomePage;
@@ -109,17 +108,15 @@ public class PinBaseTest extends BaseTest {
     }
 
     private void manageDriver() {
-        String url = properties.getProperty(getEnvironment() + "." + EnvironmentPropertiesHandler.BASE_URL);
+        String url = properties.getProperty(EnvironmentPropertiesHandler.BASE_URL);
         //driver.manage().window().setPosition(new Point(1920, 24));
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
         driver.manage().timeouts().setScriptTimeout(5, TimeUnit.SECONDS);
         driver.get(url);
-        driver.manage().window().maximize();
     }
 
     public WelcomePage clickLoginButton() {
-        SelenideElement loginButton = $(By.xpath("//button[contains(., 'Log in')]"));
-
+       // SelenideElement loginButton = $(By.xpath("//button[contains(., 'Log in')]"));
         return new WelcomePage(driver);
     }
 

@@ -15,11 +15,10 @@ import static com.codeborne.selenide.Selenide.$;
 
 public class MenuPage extends PinBasePage {
 
-    @FindBy(name = "q")
-    private WebElement mainSearchField;
 
+    private By mainSearchField = By.name("q");
     protected By saveButton = By.xpath(".//button[contains(.,'Save')]");
-    protected By logoutButton = By.xpath("//*[@href= '/logout/']");
+    protected By logoutButton = By.cssSelector("a[href='/logout/']");
 
     public MenuPage(WebDriver driver) {
         super(driver);
@@ -46,9 +45,9 @@ public class MenuPage extends PinBasePage {
 
     public WelcomePage userLogOut() {
         goToProfile();
-        $(By.xpath("//*[contains(@class, 'userProfileMenu')]")).shouldBe(visible).click();
+        $(By.xpath("//*[contains(@class, 'userMenuButton')]")).shouldBe(visible).click();
         $(logoutButton).shouldBe(visible).click();
-        $(logoutButton).shouldBe(not(visible));
+        $(logoutButton).shouldNotBe(visible);
         WaitHelper.waitForAjax(driver, 10);
         return new WelcomePage(driver);
     }

@@ -3,6 +3,7 @@ package com.pinterest.uk.pages;
 import com.pinterest.uk.helpers.StatusWebElem;
 import com.pinterest.uk.helpers.User;
 import com.pinterest.uk.pages.basePages.PinBasePage;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -13,23 +14,12 @@ import static com.codeborne.selenide.Selenide.$;
 
 public class WelcomePage extends PinBasePage {
 
-    @FindBy(id = "userEmail")
-    private WebElement userEmail;
-
-    @FindBy(id = "userPassword")
-    private WebElement userPassword;
-
-    @FindBy(name = "id")
-    private WebElement userEmailInPopup;
-
-    @FindBy(name = "password")
-    private WebElement userPasswordInPopup;
-
-    @FindBy(xpath = "//button[contains(@class, 'SignupButton')]")
-    private WebElement logInButtonPopup;
-
-    @FindBy(xpath = "//button[contains(., 'Log in')]")
-    private WebElement logInButton;
+    private By userEmail = By.id("userEmail");
+    private By userPassword = By.id("userPassword");
+    private By userEmailInPopup = By.name("id");
+    private By userPasswordInPopup= By.name("password");
+    private By logInButtonPopup= By.cssSelector("button.SignupButton");
+    private By logInButton= By.xpath("//button[contains(., 'Log in')]");
 
 
 

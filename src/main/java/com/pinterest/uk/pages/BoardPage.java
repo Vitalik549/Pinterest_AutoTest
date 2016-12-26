@@ -16,18 +16,16 @@ public class BoardPage extends MenuPage {
     }
 
     //todo: refactor!!!, same part as on homePage. Some general class for Pin search/usage should be created.
-    public SelenideElement getPin(Pin pin){
-        return $(By.xpath(".//*[contains(@class,'item')]//*[contains(@class,'pinDescription')][contains(.,'" + pin.getDescription() + "')]//ancestor::*[contains(@class,'item')]"));
-    }
+
 
     public BoardPage checkPinVisibility(Pin pin, StatusWebElem statusWebElem) {
-        checkElementStatus(getPin(pin), statusWebElem);
+        checkElementStatus(pin.getElement(), statusWebElem);
         return this;
     }
 
 
     public EditPinPage editPin(Pin pin) {
-        getPin(pin).shouldBe(visible).find(By.className("editPin")).hover().shouldBe(visible).click();
+        pin.getElement().shouldBe(visible).find(By.className("editPin")).hover().shouldBe(visible).click();
         return new EditPinPage(driver);
     }
 

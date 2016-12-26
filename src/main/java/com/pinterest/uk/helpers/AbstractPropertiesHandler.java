@@ -9,6 +9,8 @@ public abstract class AbstractPropertiesHandler {
 
     private static final Logger LOGGER = Logger.getLogger(AbstractPropertiesHandler.class);
     private Properties properties = new Properties();
+    private static final String remote = System.getProperty("testEnv");
+    private static final String ENVIRONMENT = remote == null ? "default" : remote;
 
     public AbstractPropertiesHandler(String classPath) {
         try {
@@ -23,7 +25,12 @@ public abstract class AbstractPropertiesHandler {
         LOGGER.info("Loaded properties from location: " + classPath);
     }
 
-    public String getProperty(String propertyKey) {
+    public String getProperty(String propertyNameFromDefaultEnv) {
+        return getProperty(ENVIRONMENT, propertyNameFromDefaultEnv);
+    }
+
+    public String getProperty(String environment, String property) {
+        String propertyKey = environment + "." + property;
         LOGGER.debug("Getting property with key: " + propertyKey);
         if (!properties.containsKey(propertyKey)) {
             return null;

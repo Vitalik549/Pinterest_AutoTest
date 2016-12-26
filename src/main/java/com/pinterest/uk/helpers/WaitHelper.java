@@ -17,7 +17,7 @@ public class WaitHelper {
     private static EnvironmentPropertiesHandler properties = EnvironmentPropertiesHandler.getInstance();
 
     public static void setImplicitWaitDefault(WebDriver driver) {
-        int implicit = Integer.valueOf(properties.getProperty("default." + IMPLICITLY_WAIT_TIMEOUT_IN_SECONDS));
+        int implicit = Integer.valueOf(properties.getProperty("default",  IMPLICITLY_WAIT_TIMEOUT_IN_SECONDS));
         driver.manage().timeouts().implicitlyWait(implicit, TimeUnit.SECONDS);
     }
 

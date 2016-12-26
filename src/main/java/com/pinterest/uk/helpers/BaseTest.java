@@ -123,12 +123,9 @@ public class BaseTest {
             environment = "default";
         }
         LOGGER.info("Environment is set to: " + environment);
-        browser = properties.getProperty(environment + "."
-                + EnvironmentPropertiesHandler.BROWSER);
-        if (properties.getProperty(environment + "."
-                + EnvironmentPropertiesHandler.USE_REMOTE_WEBDRIVER) != null) {
-            useRemoteWebDriver = Boolean.parseBoolean(properties.getProperty(environment + "."
-                    + EnvironmentPropertiesHandler.USE_REMOTE_WEBDRIVER));
+        browser = properties.getProperty(EnvironmentPropertiesHandler.BROWSER);
+        if (properties.getProperty(EnvironmentPropertiesHandler.USE_REMOTE_WEBDRIVER) != null) {
+            useRemoteWebDriver = Boolean.parseBoolean(properties.getProperty(EnvironmentPropertiesHandler.USE_REMOTE_WEBDRIVER));
         } else {
             useRemoteWebDriver = false;
         }
@@ -137,8 +134,7 @@ public class BaseTest {
     protected void initialiseWebDriver() {
         DesiredCapabilities capability = null;
         if (useRemoteWebDriver) {
-            String remoteWebDriverUrl = properties.getProperty(environment + "."
-                    + EnvironmentPropertiesHandler.REMOTE_WEBDRIVER_URL);
+            String remoteWebDriverUrl = properties.getProperty(EnvironmentPropertiesHandler.REMOTE_WEBDRIVER_URL);
             if (remoteWebDriverUrl != null) {
                 this.remoteWebDriverUrl = remoteWebDriverUrl;
             }
@@ -203,148 +199,106 @@ public class BaseTest {
     }
 
     private DesiredCapabilities setCapabilities(DesiredCapabilities desiredCapability) {
-        if (properties.getProperty(environment + "."
-                + EnvironmentPropertiesHandler.ACCEPT_SSL_CERTS) != null) {
+        if (properties.getProperty(EnvironmentPropertiesHandler.ACCEPT_SSL_CERTS) != null) {
             desiredCapability.setCapability(
                     CapabilityType.ACCEPT_SSL_CERTS,
-                    Boolean.parseBoolean(properties.getProperty(environment + "."
-                            + EnvironmentPropertiesHandler.ACCEPT_SSL_CERTS)));
+                    Boolean.parseBoolean(properties.getProperty(EnvironmentPropertiesHandler.ACCEPT_SSL_CERTS)));
         }
-        if (properties.getProperty(environment + "."
-                + EnvironmentPropertiesHandler.BROWSER_NAME) != null) {
+        if (properties.getProperty(EnvironmentPropertiesHandler.BROWSER_NAME) != null) {
             desiredCapability.setCapability(CapabilityType.BROWSER_NAME,
-                    properties.getProperty(environment + "."
-                            + EnvironmentPropertiesHandler.BROWSER_NAME));
+                    properties.getProperty(EnvironmentPropertiesHandler.BROWSER_NAME));
         }
-        if (properties.getProperty(environment + "."
-                + EnvironmentPropertiesHandler.ENABLE_PROFILING_CAPABILITY) != null) {
+        if (properties.getProperty(EnvironmentPropertiesHandler.ENABLE_PROFILING_CAPABILITY) != null) {
             desiredCapability.setCapability(
                     CapabilityType.ENABLE_PROFILING_CAPABILITY,
-                    Boolean.parseBoolean(properties.getProperty(environment + "."
-                            + EnvironmentPropertiesHandler.ENABLE_PROFILING_CAPABILITY)));
+                    Boolean.parseBoolean(properties.getProperty(EnvironmentPropertiesHandler.ENABLE_PROFILING_CAPABILITY)));
         }
-        if (properties.getProperty(environment + "."
-                + EnvironmentPropertiesHandler.HAS_NATIVE_EVENTS) != null) {
+        if (properties.getProperty(EnvironmentPropertiesHandler.HAS_NATIVE_EVENTS) != null) {
             desiredCapability.setCapability(
                     CapabilityType.HAS_NATIVE_EVENTS,
-                    Boolean.parseBoolean(properties.getProperty(environment + "."
-                            + EnvironmentPropertiesHandler.HAS_NATIVE_EVENTS)));
+                    Boolean.parseBoolean(properties.getProperty(EnvironmentPropertiesHandler.HAS_NATIVE_EVENTS)));
         }
-        if (properties.getProperty(environment + "."
-                + EnvironmentPropertiesHandler.PLATFORM) != null) {
+        if (properties.getProperty(EnvironmentPropertiesHandler.PLATFORM) != null) {
             desiredCapability
                     .setCapability(
                             CapabilityType.PLATFORM,
-                            Platform.valueOf(properties.getProperty(environment + "."
-                                    + EnvironmentPropertiesHandler.PLATFORM)));
+                            Platform.valueOf(properties.getProperty(EnvironmentPropertiesHandler.PLATFORM)));
         }
-        if (properties.getProperty(environment + "."
-                + EnvironmentPropertiesHandler.ROTATABLE) != null) {
+        if (properties.getProperty(EnvironmentPropertiesHandler.ROTATABLE) != null) {
             desiredCapability.setCapability(
                     CapabilityType.ROTATABLE,
-                    Boolean.parseBoolean(properties.getProperty(environment + "."
-                            + EnvironmentPropertiesHandler.ROTATABLE)));
+                    Boolean.parseBoolean(properties.getProperty(EnvironmentPropertiesHandler.ROTATABLE)));
         }
-        if (properties.getProperty(environment + "."
-                + EnvironmentPropertiesHandler.SUPPORTS_ALERTS) != null) {
+        if (properties.getProperty(EnvironmentPropertiesHandler.SUPPORTS_ALERTS) != null) {
             desiredCapability.setCapability(
                     CapabilityType.SUPPORTS_ALERTS,
-                    Boolean.parseBoolean(properties.getProperty(environment + "."
-                            + EnvironmentPropertiesHandler.SUPPORTS_ALERTS)));
+                    Boolean.parseBoolean(properties.getProperty(EnvironmentPropertiesHandler.SUPPORTS_ALERTS)));
         }
-        if (properties.getProperty(environment + "."
-                + EnvironmentPropertiesHandler.SUPPORTS_APPLICATION_CACHE) != null) {
+        if (properties.getProperty(EnvironmentPropertiesHandler.SUPPORTS_APPLICATION_CACHE) != null) {
             desiredCapability.setCapability(
                     CapabilityType.SUPPORTS_APPLICATION_CACHE,
-                    Boolean.parseBoolean(properties.getProperty(environment + "."
-                            + EnvironmentPropertiesHandler.SUPPORTS_APPLICATION_CACHE)));
+                    Boolean.parseBoolean(properties.getProperty(EnvironmentPropertiesHandler.SUPPORTS_APPLICATION_CACHE)));
         }
-        if (properties.getProperty(environment + "."
-                + EnvironmentPropertiesHandler.SUPPORTS_FINDING_BY_CSS) != null) {
+        if (properties.getProperty(EnvironmentPropertiesHandler.SUPPORTS_FINDING_BY_CSS) != null) {
             desiredCapability.setCapability(
                     CapabilityType.SUPPORTS_FINDING_BY_CSS,
-                    Boolean.parseBoolean(properties.getProperty(environment + "."
-                            + EnvironmentPropertiesHandler.SUPPORTS_FINDING_BY_CSS)));
+                    Boolean.parseBoolean(properties.getProperty(EnvironmentPropertiesHandler.SUPPORTS_FINDING_BY_CSS)));
         }
-        if (properties.getProperty(environment + "."
-                + EnvironmentPropertiesHandler.JAVA_SCRIPT_ENABLED) != null) {
+        if (properties.getProperty(EnvironmentPropertiesHandler.JAVA_SCRIPT_ENABLED) != null) {
             desiredCapability.setCapability(
                     CapabilityType.SUPPORTS_JAVASCRIPT,
-                    Boolean.parseBoolean(properties.getProperty(environment + "."
-                            + EnvironmentPropertiesHandler.JAVA_SCRIPT_ENABLED)));
+                    Boolean.parseBoolean(properties.getProperty(EnvironmentPropertiesHandler.JAVA_SCRIPT_ENABLED)));
         }
-        if (properties.getProperty(environment + "."
-                + EnvironmentPropertiesHandler.SUPPORTS_LOCATION_CONTEXT) != null) {
+        if (properties.getProperty(EnvironmentPropertiesHandler.SUPPORTS_LOCATION_CONTEXT) != null) {
             desiredCapability.setCapability(
                     CapabilityType.SUPPORTS_LOCATION_CONTEXT,
-                    Boolean.parseBoolean(properties.getProperty(environment + "."
-                            + EnvironmentPropertiesHandler.SUPPORTS_LOCATION_CONTEXT)));
+                    Boolean.parseBoolean(properties.getProperty(EnvironmentPropertiesHandler.SUPPORTS_LOCATION_CONTEXT)));
         }
-        if (properties.getProperty(environment + "."
-                + EnvironmentPropertiesHandler.SUPPORTS_SQL_DATABASE) != null) {
+        if (properties.getProperty(EnvironmentPropertiesHandler.SUPPORTS_SQL_DATABASE) != null) {
             desiredCapability.setCapability(
                     CapabilityType.SUPPORTS_SQL_DATABASE,
-                    Boolean.parseBoolean(properties.getProperty(environment + "."
-                            + EnvironmentPropertiesHandler.SUPPORTS_SQL_DATABASE)));
+                    Boolean.parseBoolean(properties.getProperty(EnvironmentPropertiesHandler.SUPPORTS_SQL_DATABASE)));
         }
-        if (properties.getProperty(environment + "."
-                + EnvironmentPropertiesHandler.SUPPORTS_WEB_STORAGE) != null) {
+        if (properties.getProperty(EnvironmentPropertiesHandler.SUPPORTS_WEB_STORAGE) != null) {
             desiredCapability.setCapability(
                     CapabilityType.SUPPORTS_WEB_STORAGE,
-                    Boolean.parseBoolean(properties.getProperty(environment + "."
-                            + EnvironmentPropertiesHandler.SUPPORTS_WEB_STORAGE)));
+                    Boolean.parseBoolean(properties.getProperty(EnvironmentPropertiesHandler.SUPPORTS_WEB_STORAGE)));
         }
-        if (properties.getProperty(environment + "."
-                + EnvironmentPropertiesHandler.TAKES_SCREENSHOT) != null) {
+        if (properties.getProperty(EnvironmentPropertiesHandler.TAKES_SCREENSHOT) != null) {
             desiredCapability.setCapability(
                     CapabilityType.TAKES_SCREENSHOT,
-                    Boolean.parseBoolean(properties.getProperty(environment + "."
-                            + EnvironmentPropertiesHandler.TAKES_SCREENSHOT)));
+                    Boolean.parseBoolean(properties.getProperty(EnvironmentPropertiesHandler.TAKES_SCREENSHOT)));
         }
-        if (properties.getProperty(environment + "."
-                + EnvironmentPropertiesHandler.UNEXPECTED_ALERT_BEHAVIOUR) != null) {
+        if (properties.getProperty(EnvironmentPropertiesHandler.UNEXPECTED_ALERT_BEHAVIOUR) != null) {
             desiredCapability.setCapability(
                     CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR,
-                    UnexpectedAlertBehaviour.fromString(properties.getProperty(environment + "."
-                            + EnvironmentPropertiesHandler.UNEXPECTED_ALERT_BEHAVIOUR)));
+                    UnexpectedAlertBehaviour.fromString(properties.getProperty(EnvironmentPropertiesHandler.UNEXPECTED_ALERT_BEHAVIOUR)));
         }
-        if (properties.getProperty(environment + "."
-                + EnvironmentPropertiesHandler.VERSION) != null) {
+        if (properties.getProperty(EnvironmentPropertiesHandler.VERSION) != null) {
             desiredCapability.setCapability(CapabilityType.VERSION,
-                    properties.getProperty(environment + "."
-                            + EnvironmentPropertiesHandler.VERSION));
+                    properties.getProperty(EnvironmentPropertiesHandler.VERSION));
         }
-        if (properties.getProperty(environment + "."
-                + EnvironmentPropertiesHandler.IGNORE_ZOOM_SETTING) != null) {
+        if (properties.getProperty(EnvironmentPropertiesHandler.IGNORE_ZOOM_SETTING) != null) {
             desiredCapability.setCapability("ignoreZoomSetting",
-                    properties.getProperty(environment + "."
-                            + EnvironmentPropertiesHandler.IGNORE_ZOOM_SETTING));
+                    properties.getProperty(EnvironmentPropertiesHandler.IGNORE_ZOOM_SETTING));
         }
-        if (properties.getProperty(environment + "."
-                + EnvironmentPropertiesHandler.IGNORE_PROTECTED_MODE_SETTINGS) != null) {
+        if (properties.getProperty(EnvironmentPropertiesHandler.IGNORE_PROTECTED_MODE_SETTINGS) != null) {
             desiredCapability.setCapability(
                     "ignoreProtectedModeSettings",
-                    properties.getProperty(environment + "."
-                            + EnvironmentPropertiesHandler.IGNORE_PROTECTED_MODE_SETTINGS));
+                    properties.getProperty(EnvironmentPropertiesHandler.IGNORE_PROTECTED_MODE_SETTINGS));
             logs = new LoggingPreferences();
         }
-        if (properties.getProperty(environment + "."
-                + EnvironmentPropertiesHandler.LOGGING_LEVEL) != null) {
+        if (properties.getProperty(EnvironmentPropertiesHandler.LOGGING_LEVEL) != null) {
             logs.enable(LogType.DRIVER,
-                    Level.parse(properties.getProperty(environment + "."
-                            + EnvironmentPropertiesHandler.LOGGING_LEVEL)));
+                    Level.parse(properties.getProperty(EnvironmentPropertiesHandler.LOGGING_LEVEL)));
             desiredCapability.setCapability(CapabilityType.LOGGING_PREFS, logs);
         }
-        if (properties.getProperty(environment + "."
-                + EnvironmentPropertiesHandler.PROXY_TYPE) != null
-                && properties.getProperty(environment + "."
-                + EnvironmentPropertiesHandler.PROXY_ADDRESS) != null) {
+        if (properties.getProperty(EnvironmentPropertiesHandler.PROXY_TYPE) != null
+                && properties.getProperty(EnvironmentPropertiesHandler.PROXY_ADDRESS) != null) {
             Proxy proxy = new Proxy();
-            proxy.setProxyType(ProxyType.valueOf(properties.getProperty(environment + "."
-                    + EnvironmentPropertiesHandler.PROXY_TYPE)));
+            proxy.setProxyType(ProxyType.valueOf(properties.getProperty(EnvironmentPropertiesHandler.PROXY_TYPE)));
             String proxyAddress = properties
-                    .getProperty(environment + "."
-                            + EnvironmentPropertiesHandler.PROXY_ADDRESS);
+                    .getProperty(EnvironmentPropertiesHandler.PROXY_ADDRESS);
             proxy.setHttpProxy(proxyAddress);
             desiredCapability.setCapability(CapabilityType.PROXY, proxy);
         }
@@ -355,25 +309,20 @@ public class BaseTest {
     private void addProfileToCapability(DesiredCapabilities desiredCapabilities) {
         FirefoxProfile profile = new FirefoxProfile();
         final boolean allowAuth = StringUtils.equals(
-                properties.getProperty(environment + "."
-                        + EnvironmentPropertiesHandler.ALLOW_BROWSER_AUTHENTICATION),
+                properties.getProperty(EnvironmentPropertiesHandler.ALLOW_BROWSER_AUTHENTICATION),
                 "true");
-        final boolean automaticallySave = properties.getProperty(environment + "."
-                + EnvironmentPropertiesHandler.AUTOMATICALLY_SAVE_TO_DISK) != null;
+        final boolean automaticallySave = properties.getProperty(EnvironmentPropertiesHandler.AUTOMATICALLY_SAVE_TO_DISK) != null;
         if (allowAuth) {
-            String trustedDomains = StringUtils.defaultString(properties.getProperty(environment + "."
-                    + EnvironmentPropertiesHandler.LIST_OF_TRUSTED_DOMAINS_FOR_BROWSER_AUTHENTICATION));
+            String trustedDomains = StringUtils.defaultString(properties.getProperty(EnvironmentPropertiesHandler.LIST_OF_TRUSTED_DOMAINS_FOR_BROWSER_AUTHENTICATION));
             profile.setPreference("network.http.phishy-userpass-length", 255);
             profile.setPreference("network.automatic-ntlm-auth.trusted-uris", trustedDomains);
         } else if (automaticallySave) {
             profile.setPreference("browser.download.folderList", 2);
             profile.setPreference("browser.download.manager.showWhenStarting", false);
             profile.setPreference("browser.download.dir",
-                    properties.getProperty(environment + "."
-                            + EnvironmentPropertiesHandler.DOWNLOAD_FILE_TO));
+                    properties.getProperty(EnvironmentPropertiesHandler.DOWNLOAD_FILE_TO));
             profile.setPreference("browser.helperApps.neverAsk.saveToDisk",
-                    properties.getProperty(environment + "."
-                            + EnvironmentPropertiesHandler.AUTOMATICALLY_SAVE_TO_DISK));
+                    properties.getProperty(EnvironmentPropertiesHandler.AUTOMATICALLY_SAVE_TO_DISK));
         }
         if (allowAuth || automaticallySave) {
             LOGGER.info("Adding profile to " + desiredCapabilities.getBrowserName());

@@ -1,23 +1,17 @@
 package com.pinterest.uk.loginTests;
 
-import com.pinterest.uk.pages.HomePage;
 import com.pinterest.uk.pages.basePages.PinBaseTest;
-import com.pinterest.uk.pages.WelcomePage;
-import org.testng.Assert;
+import org.apache.log4j.PropertyConfigurator;
 import org.testng.annotations.Test;
 
+import static com.pinterest.uk.helpers.StatusWebElem.VISIBLE;
 
 public class PIN_001_loginTest extends PinBaseTest {
 
-    private WelcomePage welcomePage;
-    private HomePage homePage;
-
     @Test(groups = GENERAL_GROUP)
     public void login() {
-        homePage = clickLoginButton().loginUser(admin);
-        Assert.assertTrue(homePage.isMainSearchDisplayed(), "User was not logged in");
-        welcomePage = homePage.userLogOut();
-
-        Assert.assertTrue(welcomePage.isLoginButtonDisplayed(), "User was not logged out");
+        clickLoginButton()
+                .loginUser(admin).checkMainSearchDisplayed(VISIBLE)
+                .userLogOut().checkLoginButtonDisplayed(VISIBLE);
     }
 }

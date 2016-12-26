@@ -1,15 +1,14 @@
 package com.pinterest.uk.pages.basePages;
 
 import com.codeborne.selenide.SelenideElement;
+import com.codeborne.selenide.WebDriverRunner;
 import com.pinterest.uk.helpers.StatusWebElem;
 import com.pinterest.uk.helpers.WaitHelper;
-import com.pinterest.uk.pages.WelcomePage;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.PageFactory;
 import org.testng.Assert;
 
 import java.util.concurrent.TimeUnit;
@@ -26,7 +25,6 @@ public class PinBasePage {
 
     protected PinBasePage(WebDriver driver) {
         this.driver = driver;
-        PageFactory.initElements(driver, this);
     }
 
     protected boolean isLoaded(String pageTitle) {
@@ -44,7 +42,7 @@ public class PinBasePage {
 
     protected boolean isTextDisplayed(String textToBeChecked) {
         try {
-            return driver.findElement(By.xpath("//*[contains(text(), '" + textToBeChecked+ "')]")).isDisplayed();
+            return driver.findElement(By.xpath("//*[contains(text(), '" + textToBeChecked + "')]")).isDisplayed();
         } catch (Exception e) {
             return false;
         }
@@ -71,7 +69,7 @@ public class PinBasePage {
 
     protected WebElement findTextEquals(String textToBeFound) {
         try {
-            return driver.findElement(By.xpath("//*[contains(text(), '" + textToBeFound+ "')]"));
+            return driver.findElement(By.xpath("//*[contains(text(), '" + textToBeFound + "')]"));
         } catch (Exception e) {
             return null;
         }
@@ -79,7 +77,7 @@ public class PinBasePage {
 
     public WebElement findTextContains(String textToBeFound) {
         try {
-            return driver.findElement(By.xpath("//*[text() = '" + textToBeFound+ "']"));
+            return driver.findElement(By.xpath("//*[text() = '" + textToBeFound + "']"));
         } catch (Exception e) {
             return null;
         }
@@ -103,7 +101,7 @@ public class PinBasePage {
 
     protected boolean isDisplayedTextContains(WebDriver driver1, String textToBeChecked) {
         try {
-            return driver1.findElement(By.xpath("//*[contains(text(), '" + textToBeChecked+ "')]")).isDisplayed();
+            return driver1.findElement(By.xpath("//*[contains(text(), '" + textToBeChecked + "')]")).isDisplayed();
         } catch (NoSuchElementException e) {
             return false;
         }
@@ -111,7 +109,7 @@ public class PinBasePage {
 
     protected boolean isDisplayedTextEquals(WebDriver driver1, String textToBeChecked) {
         try {
-            return driver1.findElement(By.xpath("//*[text() = '" + textToBeChecked+ "']")).isDisplayed();
+            return driver1.findElement(By.xpath("//*[text() = '" + textToBeChecked + "']")).isDisplayed();
         } catch (NoSuchElementException e) {
             return false;
         }
@@ -133,7 +131,7 @@ public class PinBasePage {
         }
     }
 
-    protected void checkElementStatus(SelenideElement selenideElement, StatusWebElem expectedStatus) {
+    protected static void checkElementStatus(SelenideElement selenideElement, StatusWebElem expectedStatus) {
         if (expectedStatus.equals(VISIBLE)) {
             $(selenideElement).shouldBe(visible);
         } else if (expectedStatus.equals(ENABLED)) {
@@ -147,14 +145,12 @@ public class PinBasePage {
         }
     }
 
-    protected void isElementsNotVisibleNow(SelenideElement... selenideElements) {
+    public static void isElementsNotVisibleNow(SelenideElement... selenideElements) {
+        WebDriver driver = WebDriverRunner.getWebDriver();
         WaitHelper.setImplicitWait(driver, 0.5);
         for (SelenideElement elem : selenideElements) {
             $(elem).shouldNotBe(visible);
         }
         WaitHelper.setImplicitWaitDefault(driver);
-
     }
-
-
 }

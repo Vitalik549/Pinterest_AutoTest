@@ -23,13 +23,16 @@ import static com.pinterest.uk.helpers.StatusWebElem.VISIBLE;
 public class PIN_003_addRemovePinOnBoard extends PinBaseTest {
 
     @Test(dataProviderClass = TestDataProvider.class, dataProvider = "dpForTest_003")
-    public void login(Pin pin) {
+    public void pinAddRemoveFlow(Pin pin) {
         menu().search(pin)
                 .clickSaveOnPin(pin)
                 .saveToBoard(pin.getBoardName())
                 .checkNotification("Saved to " + pin.getBoardName())
-                .goToProfile().openBoard(pin.getBoardName())
+                .goToProfile()
+                .openBoard(pin.getBoardName())
                 .checkPinVisibility(pin, VISIBLE)
-                .editPin(pin).deletePin().checkPinVisibility(pin, NOT_VISIBLE);
+                .editPin(pin)
+                .deletePin()
+                .checkPinVisibility(pin, NOT_VISIBLE);
     }
 }

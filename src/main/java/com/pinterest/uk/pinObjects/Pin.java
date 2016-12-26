@@ -1,5 +1,10 @@
 package com.pinterest.uk.pinObjects;
 
+import com.codeborne.selenide.SelenideElement;
+import org.openqa.selenium.By;
+
+import static com.codeborne.selenide.Selenide.$;
+
 public class Pin {
 
     public Pin(String description, String boardName) {
@@ -11,6 +16,9 @@ public class Pin {
     private String userName;
     private String boardName;
 
+    public SelenideElement getElement() {
+        return $(By.xpath(".//*[contains(@class,'item')]//*[contains(@class,'pinDescription')][contains(.,'" + this.getDescription() + "')]//ancestor::*[contains(@class,'item')]"));
+    }
 
     public String getDescription() {
         return description;
@@ -21,7 +29,6 @@ public class Pin {
     }
 
     public String getBoardName() {
-
         return boardName;
     }
 

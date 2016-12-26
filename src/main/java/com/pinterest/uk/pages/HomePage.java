@@ -36,7 +36,7 @@ public class HomePage extends MenuPage {
 
     public HomePage checkNotification(String expectedText) {
         //$(By.className("ToastBase")) todo  check later correct selector
-        Assert.assertEquals($(By.className("RepinSuccessToast")).shouldBe(visible).getText().trim(), expectedText, "Incorrect text in appeared notification");
+        Assert.assertEquals($(By.className("RepinSuccessToast")).shouldBe(visible).getText().replaceAll("\n", " ").trim(), expectedText, "Incorrect text in appeared notification");
         return this;
     }
 }
