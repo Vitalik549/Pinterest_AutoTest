@@ -1,9 +1,6 @@
 package com.pinterest.uk.pages.basePages;
 
-import com.pinterest.uk.helpers.BaseTest;
-import com.pinterest.uk.helpers.EnvironmentPropertiesHandler;
-import com.pinterest.uk.helpers.User;
-import com.pinterest.uk.helpers.UserPool;
+import com.pinterest.uk.helpers.*;
 import com.pinterest.uk.pages.HomePage;
 import com.pinterest.uk.pages.MenuPage;
 import com.pinterest.uk.pages.WelcomePage;
@@ -113,6 +110,12 @@ public class PinBaseTest extends BaseTest {
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
         driver.manage().timeouts().setScriptTimeout(5, TimeUnit.SECONDS);
         driver.get(url);
+    }
+
+    public HomePage loginViaHttp(User user){
+        WebDriverCookieManager webDriverCookieManager = new WebDriverCookieManager(user.email, user.password);
+        webDriverCookieManager.setSessionCookie();
+        return new HomePage(driver);
     }
 
     public WelcomePage clickLoginButton() {

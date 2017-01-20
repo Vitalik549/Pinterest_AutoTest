@@ -3,7 +3,7 @@
 <suite name="Suite" verbose="1" parallel="methods" thread-count="5">
     <test name="Regression Testing">
         <packages>
-             <package name="com.pinterest.uk.*"/>
+             <package name="com.pinterest.uk.loginTests.*"/>
         </packages>
     </test>
 </suite>
