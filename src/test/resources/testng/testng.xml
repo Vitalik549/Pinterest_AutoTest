@@ -1,6 +1,6 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 
-<suite name="Suite" verbose="1" parallel="methods" thread-count="5">
+<suite name="Pinterest testng suite" verbose="1" parallel="methods" thread-count="5">
     <test name="Regression Testing">
         <packages>
              <package name="com.pinterest.uk.loginTests.*"/>
