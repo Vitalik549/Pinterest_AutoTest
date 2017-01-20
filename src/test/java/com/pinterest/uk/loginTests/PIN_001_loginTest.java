@@ -8,7 +8,7 @@ import static com.pinterest.uk.helpers.StatusWebElem.VISIBLE;
 
 public class PIN_001_loginTest extends PinBaseTest {
 
-    @Test(groups = GENERAL_GROUP)
+    @Test(groups = GENERAL_GROUP, enabled =  false)
     public void login() {
         clickLoginButton()
                 .loginUser(admin).checkMainSearchDisplayed(VISIBLE)

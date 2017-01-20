@@ -17,7 +17,7 @@
                 </property>
             </activation>
             <properties>
-                <suites>testNG/testNG</suites> <!-- default suite -->
+                <suites>testng/testng</suites> <!-- default suite -->
             </properties>
         </profile>
     </profiles>
@@ -95,7 +95,7 @@
                         -javaagent:${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar
                     </argLine>
                     <suiteXmlFiles>
-                        <suiteXmlFile>src/test/resources/suites/${suites}.xml</suiteXmlFile>
+                        <suiteXmlFile>src/test/resources/${suites}.xml</suiteXmlFile>
                     </suiteXmlFiles>
                     <properties>
                         <property>
