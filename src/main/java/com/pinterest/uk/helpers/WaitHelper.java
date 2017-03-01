@@ -8,13 +8,13 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.concurrent.TimeUnit;
 
-import static com.pinterest.uk.helpers.EnvironmentPropertiesHandler.*;
+import static com.pinterest.uk.helpers.EnvPropertiesHandler.*;
 
 @SuppressWarnings("all")
 public class WaitHelper {
     private static final Logger LOGGER = Logger.getLogger(WaitHelper.class);
     private static final long DEFAULT_WAIT_MILISECONDS = 200;
-    private static EnvironmentPropertiesHandler properties = EnvironmentPropertiesHandler.getInstance();
+    private static EnvPropertiesHandler properties = EnvPropertiesHandler.getInstance();
 
     public static void setImplicitWaitDefault(WebDriver driver) {
         int implicit = Integer.valueOf(properties.getProperty("default",  IMPLICITLY_WAIT_TIMEOUT_IN_SECONDS));

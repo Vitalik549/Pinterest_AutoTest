@@ -14,7 +14,6 @@ public class EditPinPage extends MenuPage {
 
     By popup = By.className("standardForm");
 
-
     public BoardPage deletePin() {
         $(popup).find(By.className("deleteButton")).shouldBe(visible).click();
         $(By.className("ConfirmDialog")).find(By.className("confirm")).shouldBe(visible).click();

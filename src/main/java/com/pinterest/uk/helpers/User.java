@@ -9,10 +9,10 @@ public class User {
     public String login;
     public String email;
 
-    public String getFullNaming(){
-        if (firstName==null || lastName==null){
+    public String getFullNaming() {
+        if (firstName == null || lastName == null) {
             return login;
-        }else{
+        } else {
             return firstName + " " + lastName;
         }
     }
@@ -27,9 +27,7 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        if (!email.equals(user.email)) return false;
-
-        return true;
+        return email.equals(user.email);
     }
 
     @Override

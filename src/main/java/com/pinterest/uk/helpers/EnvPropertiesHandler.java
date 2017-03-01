@@ -1,6 +1,6 @@
 package com.pinterest.uk.helpers;
 
-public class EnvironmentPropertiesHandler extends AbstractPropertiesHandler {
+public class EnvPropertiesHandler extends AbstractPropertiesHandler {
     public static final String PROPERTIES_LOCATION = "properties/environment.properties";
     public static final String BROWSER = "browser";
     public static final String BASE_URL = "base_url";
@@ -37,15 +37,15 @@ public class EnvironmentPropertiesHandler extends AbstractPropertiesHandler {
     public static final String STORE_SCREEN_TO = "store_screen_to";
     public static final String IMPLICITLY_WAIT_TIMEOUT_IN_SECONDS = "implicitly_wait_timeout_in_seconds";
 
-    private EnvironmentPropertiesHandler(String location) {
+    private EnvPropertiesHandler(String location) {
         super(location);
     }
 
-    private static EnvironmentPropertiesHandler propertiesHandler = null;
+    private static EnvPropertiesHandler propertiesHandler = null;
 
-    public static EnvironmentPropertiesHandler getInstance() {
+    public static EnvPropertiesHandler getInstance() {
         if (propertiesHandler == null) {
-            propertiesHandler = new EnvironmentPropertiesHandler(PROPERTIES_LOCATION);
+            propertiesHandler = new EnvPropertiesHandler(PROPERTIES_LOCATION);
         }
         return propertiesHandler;
     }

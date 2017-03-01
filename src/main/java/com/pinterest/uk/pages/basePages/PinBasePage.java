@@ -17,7 +17,7 @@ import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.$;
 import static com.pinterest.uk.helpers.StatusWebElem.*;
 
-public class PinBasePage {
+public abstract class PinBasePage {
 
     private long timeout = 30;
     protected Logger log = Logger.getLogger(this.getClass());

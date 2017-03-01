@@ -6,15 +6,12 @@ import com.pinterest.uk.pages.basePages.PinBasePage;
 import com.pinterest.uk.pinObjects.Pin;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
-import org.testng.Assert;
 
-import static com.codeborne.selenide.Condition.*;
+import static com.codeborne.selenide.Condition.not;
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 
 public class MenuPage extends PinBasePage {
-
 
     private By mainSearchField = By.name("q");
     protected By saveButton = By.xpath(".//button[contains(.,'Save')]");
@@ -56,8 +53,4 @@ public class MenuPage extends PinBasePage {
         $(By.className("UserNavigateButton")).shouldBe(visible).click();
         return new ProfilePage(driver);
     }
-
-
-
-
 }

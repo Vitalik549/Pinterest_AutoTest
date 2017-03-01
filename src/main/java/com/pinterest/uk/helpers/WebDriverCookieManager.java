@@ -28,7 +28,7 @@ public class WebDriverCookieManager {
 
     private Logger log = Logger.getLogger(WebDriverCookieManager.class);
 
-    private static String BASE_URL = EnvironmentPropertiesHandler.getInstance().getProperty(EnvironmentPropertiesHandler.BASE_URL);
+    private static String BASE_URL = EnvPropertiesHandler.getInstance().getProperty(EnvPropertiesHandler.BASE_URL);
     private static final String COOKIE_NAME = "JSESSIONID";
     private static final String GET_TOKEN_JS_CODE = "return Zoomdata.pageData.csrfToken;";
     private static final String SECURITY_CHECK_URL = BASE_URL + "/j_spring_security_check";
@@ -62,7 +62,7 @@ public class WebDriverCookieManager {
             } catch (Exception | AssertionError e) {
                 log.error("Failed to fetch cookie or csrf token from Login Page after " + attempt + " attempt(s)!\n" +
                         "Will try one more time...\n");
-                log.warn(e.getStackTrace().toString());
+                log.warn(e.getStackTrace());
 
                 attempt++;
 

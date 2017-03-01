@@ -17,7 +17,6 @@ import static org.testng.Assert.assertTrue;
 
 public class XlsxReader {
 
-
     public static ArrayList<ArrayList<String>> getFileData(String pathToFile) {
         return getFileData(new File(pathToFile));
     }
@@ -49,8 +48,6 @@ public class XlsxReader {
                 rows.add(cells);
             }
         }
-
-
         return rows;
     }
 

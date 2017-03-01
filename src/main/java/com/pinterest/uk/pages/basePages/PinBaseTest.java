@@ -39,7 +39,7 @@ public class PinBaseTest extends BaseTest {
 
     public static final String GENERAL_GROUP = "for tests where auto-login is not required";
 
-    private final EnvironmentPropertiesHandler properties = EnvironmentPropertiesHandler.getInstance();
+    private final EnvPropertiesHandler properties = EnvPropertiesHandler.getInstance();
 
     public WebDriver getDriver() {
         return driver;
@@ -105,13 +105,14 @@ public class PinBaseTest extends BaseTest {
     }
 
     private void manageDriver() {
-        String url = properties.getProperty(EnvironmentPropertiesHandler.BASE_URL);
+        String url = properties.getProperty(EnvPropertiesHandler.BASE_URL);
         //driver.manage().window().setPosition(new Point(1920, 24));
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
         driver.manage().timeouts().setScriptTimeout(5, TimeUnit.SECONDS);
         driver.get(url);
     }
 
+    //todo
     public HomePage loginViaHttp(User user){
         WebDriverCookieManager webDriverCookieManager = new WebDriverCookieManager(user.email, user.password);
         webDriverCookieManager.setSessionCookie();

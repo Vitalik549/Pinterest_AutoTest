@@ -26,23 +26,25 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.logging.Level;
 
 public class BaseTest {
 
     private static final Logger LOGGER = Logger.getLogger(BaseTest.class);
     protected WebDriver driver;
-    private String remoteWebDriverUrl = null;
     private LoggingPreferences logs;
     private String environment;
     private static String browser;
     private static boolean useRemoteWebDriver;
-    private EnvironmentPropertiesHandler properties;
+    private EnvPropertiesHandler properties;
+    private DesiredCapabilities desiredCapabilities;
 
     public void setUp() {
         final Os os = getOs();
         initializeStaticFields();
-        if (!useRemoteWebDriver && os != Os.MACOS32) {
+        if (!useRemoteWebDriver) {
             initializeDriver("webdriver.chrome.driver", os, os.chromePath);
         }
         initialiseWebDriver();
@@ -86,247 +88,176 @@ public class BaseTest {
     }
 
     private void initializeDriver(String browserSystemVariable, Os os, String browserPath) {
-        if (browserPath != null) {
-            InputStream inputStream = getClass().getClassLoader().getResourceAsStream(
-                    os.prefix + browserPath + os.suffix);
-            if (inputStream == null) {
-                throw new IllegalStateException("Cannot locate driver on classpath (missing dependency): "
-                        + os.prefix + browserPath + os.suffix);
-            }
+        if (browserPath == null) return;
+
+        InputStream inputStream = getClass()
+                .getClassLoader()
+                .getResourceAsStream(os.prefix + browserPath + os.suffix);
+
+        if (inputStream == null)
+            throw new IllegalStateException("Cannot locate driver on classpath (missing dependency): "
+                    + os.prefix + browserPath + os.suffix);
+
+        try {
+            File temp = File.createTempFile(browserPath, os.suffix);
+            temp.setExecutable(true);
+            FileUtils.copyInputStreamToFile(inputStream, temp);
+            System.setProperty(browserSystemVariable, temp.getAbsolutePath());
+        } catch (IOException e) {
+            final String msg = "Error while copying driver executable";
+            LOGGER.error(msg, e);
+            throw new RuntimeException(msg, e);
+        } finally {
             try {
-                File temp = File.createTempFile(browserPath, os.suffix);
-                temp.setExecutable(true);
-                FileUtils.copyInputStreamToFile(inputStream, temp);
-                System.setProperty(browserSystemVariable, temp.getAbsolutePath());
+                inputStream.close();
             } catch (IOException e) {
-                final String msg = "Error while copying driver exacutable";
+                final String msg = "Error while closing the input stream";
                 LOGGER.error(msg, e);
                 throw new RuntimeException(msg, e);
-            } finally {
-                if (inputStream != null) {
-                    try {
-                        inputStream.close();
-                    } catch (IOException e) {
-                        final String msg = "Error while closing the input stream";
-                        LOGGER.error(msg, e);
-                        throw new RuntimeException(msg, e);
-                    }
-                }
             }
         }
+
     }
 
     private void initializeStaticFields() {
-        this.properties = EnvironmentPropertiesHandler.getInstance();
-        environment = System.getProperty("testEnv");
-        if (environment == null) {
-            environment = "default";
-        }
+        environment = Optional.ofNullable(System.getProperty("testEnv")).orElse("default");
+
         LOGGER.info("Environment is set to: " + environment);
-        browser = properties.getProperty(EnvironmentPropertiesHandler.BROWSER);
-        if (properties.getProperty(EnvironmentPropertiesHandler.USE_REMOTE_WEBDRIVER) != null) {
-            useRemoteWebDriver = Boolean.parseBoolean(properties.getProperty(EnvironmentPropertiesHandler.USE_REMOTE_WEBDRIVER));
+
+        properties = EnvPropertiesHandler.getInstance();
+        browser = properties.getProperty(EnvPropertiesHandler.BROWSER);
+
+        Optional<String> remoteProperty = Optional.ofNullable(properties.getProperty(EnvPropertiesHandler.USE_REMOTE_WEBDRIVER));
+        useRemoteWebDriver = remoteProperty.isPresent() && Boolean.parseBoolean(remoteProperty.get());
+    }
+
+    private void initialiseWebDriver() {
+        if (useRemoteWebDriver) {
+            initialiseRemoteWebDriver();
         } else {
-            useRemoteWebDriver = false;
+            initialiseLocalWebDriver();
+        }
+        logBrowserSettings(desiredCapabilities);
+    }
+
+    private void initialiseRemoteWebDriver() {
+        String remoteWebDriverUrl = properties.getProperty(EnvPropertiesHandler.REMOTE_WEBDRIVER_URL);
+        if (remoteWebDriverUrl == null) throw new RuntimeException("Remote webdriver url was not defined!");
+
+        if (browser.equalsIgnoreCase("firefox")) {
+            desiredCapabilities = DesiredCapabilities.firefox();
+            addProfileToCapability(desiredCapabilities);
+        } else if (browser.equalsIgnoreCase("internetexplorer")) {
+            desiredCapabilities = DesiredCapabilities.internetExplorer();
+            desiredCapabilities.setCapability("ignoreZoomSetting", true);
+        } else if (browser.equalsIgnoreCase("chrome")) {
+            desiredCapabilities = DesiredCapabilities.chrome();
+        } else if (browser.equalsIgnoreCase("opera")) {
+            desiredCapabilities = DesiredCapabilities.opera();
+        } else if (browser.equalsIgnoreCase("mobileSafari")) {
+            desiredCapabilities = new DesiredCapabilities();
+        } else if (browser.equalsIgnoreCase("androidWeb")) {
+            desiredCapabilities = DesiredCapabilities.android();
+        } else {
+            desiredCapabilities = new DesiredCapabilities();
+        }
+
+        try {
+            driver = new RemoteWebDriver(new URL(remoteWebDriverUrl), setCapabilities());
+            ((RemoteWebDriver) driver).setFileDetector(new LocalFileDetector());
+        } catch (MalformedURLException e) {
+            final String msg = "Error while initializing remote webdriver with url: " + remoteWebDriverUrl;
+            LOGGER.error(msg, e);
+            throw new RuntimeException(msg, e);
         }
     }
 
-    protected void initialiseWebDriver() {
-        DesiredCapabilities capability = null;
-        if (useRemoteWebDriver) {
-            String remoteWebDriverUrl = properties.getProperty(EnvironmentPropertiesHandler.REMOTE_WEBDRIVER_URL);
-            if (remoteWebDriverUrl != null) {
-                this.remoteWebDriverUrl = remoteWebDriverUrl;
-            }
-
-            if (browser.equalsIgnoreCase("firefox")) {
-                capability = DesiredCapabilities.firefox();
-                addProfileToCapability(capability);
-            } else if (browser.equalsIgnoreCase("internetexplorer")) {
-                capability = DesiredCapabilities.internetExplorer();
-                capability.setCapability("ignoreZoomSetting", true);
-            } else if (browser.equalsIgnoreCase("chrome")) {
-                capability = DesiredCapabilities.chrome();
-            } else if (browser.equalsIgnoreCase("opera")) {
-                capability = DesiredCapabilities.opera();
-            } else if (browser.equalsIgnoreCase("mobileSafari")) {
-                capability = new DesiredCapabilities();
-            } else if (browser.equalsIgnoreCase("androidWeb")) {
-                capability = DesiredCapabilities.android();
-            } else {
-                capability = new DesiredCapabilities();
-            }
-            try {
-                LOGGER.info("Initializing remote webdriver with: "
-                        + capability.getBrowserName() + ", "
-                        + capability.getVersion() + ", "
-                        + capability.getPlatform());
-                driver = new RemoteWebDriver(new URL(this.remoteWebDriverUrl), setCapabilities(capability));
-                ((RemoteWebDriver) driver).setFileDetector(new LocalFileDetector());
-            } catch (MalformedURLException e) {
-                final String msg = "Error while initializing remote webdriver with url: "
-                        + this.remoteWebDriverUrl;
-                LOGGER.error(msg, e);
-                throw new RuntimeException(msg, e);
-            }
-        } else if (browser.equals("firefox")) {
-            capability = DesiredCapabilities.firefox();
-            {
-                addProfileToCapability(capability);
-                LOGGER.info("Initializing webdriver with " + capability.getBrowserName() + ", "
-                        + capability.getVersion()
-                        + ", " + capability.getPlatform());
-                driver = new FirefoxDriver(setCapabilities(capability));
-            }
+    private void initialiseLocalWebDriver() {
+        if (browser.equals("firefox")) {
+            desiredCapabilities = DesiredCapabilities.firefox();
+            addProfileToCapability(desiredCapabilities);
+            driver = new FirefoxDriver(setCapabilities());
         } else if (browser.equalsIgnoreCase("chrome")) {
-            capability = DesiredCapabilities.chrome();
-            LOGGER.info("Initializing webdriver with " + capability.getBrowserName() + ", "
-                    + capability.getVersion()
-                    + ", " + capability.getPlatform());
-            driver = new ChromeDriver(setCapabilities(capability));
+            desiredCapabilities = DesiredCapabilities.chrome();
+            driver = new ChromeDriver(setCapabilities());
         } else if (browser.equalsIgnoreCase("opera")) {
         } else {
             final String msg = "No proper browser settings, check environment.properties";
             LOGGER.error(msg);
-            {
-                throw new RuntimeException(msg);
-            }
+            throw new RuntimeException(msg);
         }
     }
 
-    private void logBrowserSetting(DesiredCapabilities capability) {
-        LOGGER.info("Initializing webdriver with " + capability.getBrowserName() + ", " + capability.getVersion() + ", " + capability.getPlatform());
+    private void setCapability(String capability, String property, Function<String, Object> func) {
+        if (properties.getProperty(property) != null) {
+            desiredCapabilities.setCapability(capability, func.apply(property));
+        }
     }
 
-    private DesiredCapabilities setCapabilities(DesiredCapabilities desiredCapability) {
-        if (properties.getProperty(EnvironmentPropertiesHandler.ACCEPT_SSL_CERTS) != null) {
-            desiredCapability.setCapability(
-                    CapabilityType.ACCEPT_SSL_CERTS,
-                    Boolean.parseBoolean(properties.getProperty(EnvironmentPropertiesHandler.ACCEPT_SSL_CERTS)));
-        }
-        if (properties.getProperty(EnvironmentPropertiesHandler.BROWSER_NAME) != null) {
-            desiredCapability.setCapability(CapabilityType.BROWSER_NAME,
-                    properties.getProperty(EnvironmentPropertiesHandler.BROWSER_NAME));
-        }
-        if (properties.getProperty(EnvironmentPropertiesHandler.ENABLE_PROFILING_CAPABILITY) != null) {
-            desiredCapability.setCapability(
-                    CapabilityType.ENABLE_PROFILING_CAPABILITY,
-                    Boolean.parseBoolean(properties.getProperty(EnvironmentPropertiesHandler.ENABLE_PROFILING_CAPABILITY)));
-        }
-        if (properties.getProperty(EnvironmentPropertiesHandler.HAS_NATIVE_EVENTS) != null) {
-            desiredCapability.setCapability(
-                    CapabilityType.HAS_NATIVE_EVENTS,
-                    Boolean.parseBoolean(properties.getProperty(EnvironmentPropertiesHandler.HAS_NATIVE_EVENTS)));
-        }
-        if (properties.getProperty(EnvironmentPropertiesHandler.PLATFORM) != null) {
-            desiredCapability
-                    .setCapability(
-                            CapabilityType.PLATFORM,
-                            Platform.valueOf(properties.getProperty(EnvironmentPropertiesHandler.PLATFORM)));
-        }
-        if (properties.getProperty(EnvironmentPropertiesHandler.ROTATABLE) != null) {
-            desiredCapability.setCapability(
-                    CapabilityType.ROTATABLE,
-                    Boolean.parseBoolean(properties.getProperty(EnvironmentPropertiesHandler.ROTATABLE)));
-        }
-        if (properties.getProperty(EnvironmentPropertiesHandler.SUPPORTS_ALERTS) != null) {
-            desiredCapability.setCapability(
-                    CapabilityType.SUPPORTS_ALERTS,
-                    Boolean.parseBoolean(properties.getProperty(EnvironmentPropertiesHandler.SUPPORTS_ALERTS)));
-        }
-        if (properties.getProperty(EnvironmentPropertiesHandler.SUPPORTS_APPLICATION_CACHE) != null) {
-            desiredCapability.setCapability(
-                    CapabilityType.SUPPORTS_APPLICATION_CACHE,
-                    Boolean.parseBoolean(properties.getProperty(EnvironmentPropertiesHandler.SUPPORTS_APPLICATION_CACHE)));
-        }
-        if (properties.getProperty(EnvironmentPropertiesHandler.SUPPORTS_FINDING_BY_CSS) != null) {
-            desiredCapability.setCapability(
-                    CapabilityType.SUPPORTS_FINDING_BY_CSS,
-                    Boolean.parseBoolean(properties.getProperty(EnvironmentPropertiesHandler.SUPPORTS_FINDING_BY_CSS)));
-        }
-        if (properties.getProperty(EnvironmentPropertiesHandler.JAVA_SCRIPT_ENABLED) != null) {
-            desiredCapability.setCapability(
-                    CapabilityType.SUPPORTS_JAVASCRIPT,
-                    Boolean.parseBoolean(properties.getProperty(EnvironmentPropertiesHandler.JAVA_SCRIPT_ENABLED)));
-        }
-        if (properties.getProperty(EnvironmentPropertiesHandler.SUPPORTS_LOCATION_CONTEXT) != null) {
-            desiredCapability.setCapability(
-                    CapabilityType.SUPPORTS_LOCATION_CONTEXT,
-                    Boolean.parseBoolean(properties.getProperty(EnvironmentPropertiesHandler.SUPPORTS_LOCATION_CONTEXT)));
-        }
-        if (properties.getProperty(EnvironmentPropertiesHandler.SUPPORTS_SQL_DATABASE) != null) {
-            desiredCapability.setCapability(
-                    CapabilityType.SUPPORTS_SQL_DATABASE,
-                    Boolean.parseBoolean(properties.getProperty(EnvironmentPropertiesHandler.SUPPORTS_SQL_DATABASE)));
-        }
-        if (properties.getProperty(EnvironmentPropertiesHandler.SUPPORTS_WEB_STORAGE) != null) {
-            desiredCapability.setCapability(
-                    CapabilityType.SUPPORTS_WEB_STORAGE,
-                    Boolean.parseBoolean(properties.getProperty(EnvironmentPropertiesHandler.SUPPORTS_WEB_STORAGE)));
-        }
-        if (properties.getProperty(EnvironmentPropertiesHandler.TAKES_SCREENSHOT) != null) {
-            desiredCapability.setCapability(
-                    CapabilityType.TAKES_SCREENSHOT,
-                    Boolean.parseBoolean(properties.getProperty(EnvironmentPropertiesHandler.TAKES_SCREENSHOT)));
-        }
-        if (properties.getProperty(EnvironmentPropertiesHandler.UNEXPECTED_ALERT_BEHAVIOUR) != null) {
-            desiredCapability.setCapability(
-                    CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR,
-                    UnexpectedAlertBehaviour.fromString(properties.getProperty(EnvironmentPropertiesHandler.UNEXPECTED_ALERT_BEHAVIOUR)));
-        }
-        if (properties.getProperty(EnvironmentPropertiesHandler.VERSION) != null) {
-            desiredCapability.setCapability(CapabilityType.VERSION,
-                    properties.getProperty(EnvironmentPropertiesHandler.VERSION));
-        }
-        if (properties.getProperty(EnvironmentPropertiesHandler.IGNORE_ZOOM_SETTING) != null) {
-            desiredCapability.setCapability("ignoreZoomSetting",
-                    properties.getProperty(EnvironmentPropertiesHandler.IGNORE_ZOOM_SETTING));
-        }
-        if (properties.getProperty(EnvironmentPropertiesHandler.IGNORE_PROTECTED_MODE_SETTINGS) != null) {
-            desiredCapability.setCapability(
-                    "ignoreProtectedModeSettings",
-                    properties.getProperty(EnvironmentPropertiesHandler.IGNORE_PROTECTED_MODE_SETTINGS));
+    private DesiredCapabilities setCapabilities() {
+        setCapability(CapabilityType.ACCEPT_SSL_CERTS, EnvPropertiesHandler.ACCEPT_SSL_CERTS, Boolean::parseBoolean);
+        setCapability(CapabilityType.BROWSER_NAME, EnvPropertiesHandler.BROWSER_NAME, prop -> prop);
+        setCapability(CapabilityType.ENABLE_PROFILING_CAPABILITY, EnvPropertiesHandler.ENABLE_PROFILING_CAPABILITY, Boolean::parseBoolean);
+        setCapability(CapabilityType.HAS_NATIVE_EVENTS, EnvPropertiesHandler.HAS_NATIVE_EVENTS, Boolean::parseBoolean);
+        setCapability(CapabilityType.PLATFORM, EnvPropertiesHandler.PLATFORM, Platform::valueOf);
+        setCapability(CapabilityType.ROTATABLE, EnvPropertiesHandler.ROTATABLE, Boolean::parseBoolean);
+        setCapability(CapabilityType.SUPPORTS_ALERTS, EnvPropertiesHandler.SUPPORTS_ALERTS, Boolean::parseBoolean);
+        setCapability(CapabilityType.SUPPORTS_APPLICATION_CACHE, EnvPropertiesHandler.SUPPORTS_APPLICATION_CACHE, Boolean::parseBoolean);
+        setCapability(CapabilityType.SUPPORTS_FINDING_BY_CSS, EnvPropertiesHandler.SUPPORTS_FINDING_BY_CSS, Boolean::parseBoolean);
+        setCapability(CapabilityType.SUPPORTS_LOCATION_CONTEXT, EnvPropertiesHandler.SUPPORTS_LOCATION_CONTEXT, Boolean::parseBoolean);
+        setCapability(CapabilityType.SUPPORTS_SQL_DATABASE, EnvPropertiesHandler.SUPPORTS_SQL_DATABASE, Boolean::parseBoolean);
+        setCapability(CapabilityType.SUPPORTS_WEB_STORAGE, EnvPropertiesHandler.SUPPORTS_WEB_STORAGE, Boolean::parseBoolean);
+        setCapability(CapabilityType.TAKES_SCREENSHOT, EnvPropertiesHandler.TAKES_SCREENSHOT, Boolean::parseBoolean);
+        setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, EnvPropertiesHandler.UNEXPECTED_ALERT_BEHAVIOUR, UnexpectedAlertBehaviour::fromString);
+        setCapability(CapabilityType.VERSION, EnvPropertiesHandler.VERSION, prop -> prop);
+        setCapability("ignoreZoomSetting", EnvPropertiesHandler.IGNORE_ZOOM_SETTING, prop -> prop);
+        setCapability("ignoreProtectedModeSettings", EnvPropertiesHandler.IGNORE_PROTECTED_MODE_SETTINGS, prop -> {
             logs = new LoggingPreferences();
-        }
-        if (properties.getProperty(EnvironmentPropertiesHandler.LOGGING_LEVEL) != null) {
-            logs.enable(LogType.DRIVER,
-                    Level.parse(properties.getProperty(EnvironmentPropertiesHandler.LOGGING_LEVEL)));
-            desiredCapability.setCapability(CapabilityType.LOGGING_PREFS, logs);
-        }
-        if (properties.getProperty(EnvironmentPropertiesHandler.PROXY_TYPE) != null
-                && properties.getProperty(EnvironmentPropertiesHandler.PROXY_ADDRESS) != null) {
-            Proxy proxy = new Proxy();
-            proxy.setProxyType(ProxyType.valueOf(properties.getProperty(EnvironmentPropertiesHandler.PROXY_TYPE)));
-            String proxyAddress = properties
-                    .getProperty(EnvironmentPropertiesHandler.PROXY_ADDRESS);
-            proxy.setHttpProxy(proxyAddress);
-            desiredCapability.setCapability(CapabilityType.PROXY, proxy);
-        }
-        return desiredCapability;
+            return prop;
+        });
+        setCapability(CapabilityType.LOGGING_PREFS, EnvPropertiesHandler.LOGGING_LEVEL, prop -> {
+            logs.enable(LogType.DRIVER, Level.parse(properties.getProperty(EnvPropertiesHandler.LOGGING_LEVEL)));
+            return logs;
+        });
 
+        if (properties.getProperty(EnvPropertiesHandler.PROXY_TYPE) != null
+                && properties.getProperty(EnvPropertiesHandler.PROXY_ADDRESS) != null) {
+            Proxy proxy = new Proxy();
+            proxy.setProxyType(ProxyType.valueOf(properties.getProperty(EnvPropertiesHandler.PROXY_TYPE)));
+            String proxyAddress = properties
+                    .getProperty(EnvPropertiesHandler.PROXY_ADDRESS);
+            proxy.setHttpProxy(proxyAddress);
+            desiredCapabilities.setCapability(CapabilityType.PROXY, proxy);
+        }
+        return desiredCapabilities;
     }
 
     private void addProfileToCapability(DesiredCapabilities desiredCapabilities) {
         FirefoxProfile profile = new FirefoxProfile();
         final boolean allowAuth = StringUtils.equals(
-                properties.getProperty(EnvironmentPropertiesHandler.ALLOW_BROWSER_AUTHENTICATION),
+                properties.getProperty(EnvPropertiesHandler.ALLOW_BROWSER_AUTHENTICATION),
                 "true");
-        final boolean automaticallySave = properties.getProperty(EnvironmentPropertiesHandler.AUTOMATICALLY_SAVE_TO_DISK) != null;
+        final boolean automaticallySave = properties.getProperty(EnvPropertiesHandler.AUTOMATICALLY_SAVE_TO_DISK) != null;
         if (allowAuth) {
-            String trustedDomains = StringUtils.defaultString(properties.getProperty(EnvironmentPropertiesHandler.LIST_OF_TRUSTED_DOMAINS_FOR_BROWSER_AUTHENTICATION));
+            String trustedDomains = StringUtils.defaultString(properties.getProperty(EnvPropertiesHandler.LIST_OF_TRUSTED_DOMAINS_FOR_BROWSER_AUTHENTICATION));
             profile.setPreference("network.http.phishy-userpass-length", 255);
             profile.setPreference("network.automatic-ntlm-auth.trusted-uris", trustedDomains);
         } else if (automaticallySave) {
             profile.setPreference("browser.download.folderList", 2);
             profile.setPreference("browser.download.manager.showWhenStarting", false);
-            profile.setPreference("browser.download.dir",
-                    properties.getProperty(EnvironmentPropertiesHandler.DOWNLOAD_FILE_TO));
-            profile.setPreference("browser.helperApps.neverAsk.saveToDisk",
-                    properties.getProperty(EnvironmentPropertiesHandler.AUTOMATICALLY_SAVE_TO_DISK));
+            profile.setPreference("browser.download.dir", properties.getProperty(EnvPropertiesHandler.DOWNLOAD_FILE_TO));
+            profile.setPreference("browser.helperApps.neverAsk.saveToDisk", properties.getProperty(EnvPropertiesHandler.AUTOMATICALLY_SAVE_TO_DISK));
         }
         if (allowAuth || automaticallySave) {
             LOGGER.info("Adding profile to " + desiredCapabilities.getBrowserName());
             desiredCapabilities.setCapability(FirefoxDriver.PROFILE, profile);
         }
+    }
+
+    private void logBrowserSettings(DesiredCapabilities capability) {
+        String remote = useRemoteWebDriver ? "remote " : "";
+        String msg = String.format("Initializing %swebdriver with %s, %s, %s.",
+                remote, capability.getBrowserName(), capability.getVersion(), capability.getPlatform());
+        LOGGER.info(msg);
     }
 }

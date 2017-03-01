@@ -3,14 +3,14 @@ package com.pinterest.uk.helpers;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.Properties;
 
 public abstract class AbstractPropertiesHandler {
 
     private static final Logger LOGGER = Logger.getLogger(AbstractPropertiesHandler.class);
     private Properties properties = new Properties();
-    private static final String remote = System.getProperty("testEnv");
-    private static final String ENVIRONMENT = remote == null ? "default" : remote;
+    private static final String ENVIRONMENT = Optional.ofNullable(System.getProperty("testEnv")).orElse("default");
 
     public AbstractPropertiesHandler(String classPath) {
         try {

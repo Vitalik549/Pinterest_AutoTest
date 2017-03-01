@@ -15,8 +15,7 @@ public class PinCreatePage extends MenuPage {
         super(driver);
     }
 
-    By popup = className("TwoPaneModal");
-
+    private By popup = className("TwoPaneModal");
 
     public HomePage saveToBoard(String boardName) {
         $(popup).find(className("allBoards")).find(xpath(".//*[contains(@class,'item')][contains(.,'" + boardName + "')]"))

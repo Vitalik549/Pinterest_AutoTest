@@ -1,16 +1,21 @@
 package com.pinterest.uk.helpers;
 
 import org.apache.log4j.Logger;
+
 import java.util.Arrays;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static com.codeborne.selenide.Selenide.sleep;
 
 public class UserPool {
 
-    /*
-            Class that contains pool of users available for parallel test runs.
-            getFreeAdminUser() - returns random free user and blocks it until user released by releaseAdminUser(User)
-            addUsersToPool(User) - method to fill pool with users
-    */
+    /**
+     * Class that contains pool of users available for parallel test runs.
+     *
+     * @implNote addUsersToPool(User) - method to fill pool with users
+     * @implNote getFreeAdminUser() - returns random free user and blocks it until user released by releaseAdminUser(User)
+     */
 
     private static ConcurrentHashMap<User, Boolean> adminUserPool = new ConcurrentHashMap<>();
     private static final Logger LOGGER = Logger.getLogger(UserPool.class);
@@ -27,27 +32,20 @@ public class UserPool {
         int counter = 0;
         do {
             freeUser = getFreeUserFromPoolSet();
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ignored) {
-            }
+            sleep(500);
         } while (freeUser == null && counter++ < MAX_WAITING_SECONDS);
         return freeUser;
     }
 
-
     private static synchronized User getFreeUserFromPoolSet() {
-        User freeUser = null;
-        for (User user : adminUserPool.keySet()) {
-            if (adminUserPool.get(user)) {
-                freeUser = user;
-                adminUserPool.put(freeUser, false);
-                break;
-            }
-        }
-        return freeUser;
-    }
+        return adminUserPool.entrySet()
+                .stream()
+                .filter(Map.Entry::getValue)
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElse(null);
 
+    }
 
     public synchronized static void releaseAdminUser(User user) {
         if (adminUserPool.containsKey(user)) {
